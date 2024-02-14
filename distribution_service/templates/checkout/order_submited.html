@@ -1,0 +1,10 @@
+{% extends "base.html" %} {% block content %}
+<h2>Order Submitted</h2>
+<p>Thank you for your order.</p>
+{% if order_number %}
+<p>Your order number is: <strong>{{ order_number }}</strong></p>
+{% else %}
+<p>There was an issue retrieving your order number. Please contact support.</p>
+{% endif %}
+<a href="{% url 'ice_cream_list' %}">Continue Shopping</a>
+{% endblock %}

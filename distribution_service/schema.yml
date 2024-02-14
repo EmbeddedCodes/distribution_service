@@ -1,0 +1,1238 @@
+openapi: 3.0.3
+info:
+  title: ICE-CREAM Distribution Service
+  version: 1.0.0
+  description: ICE-CREAM Distribution Service API
+paths:
+  /api/auth/login/:
+    post:
+      operationId: auth_login_create
+      description: |-
+        Check the credentials and return the REST Token
+        if the credentials are valid and authenticated.
+        Calls Django Auth login method to register User ID
+        in Django session framework
+
+        Accept the following POST parameters: username, password
+        Return the REST Framework Token Object's key.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Login'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Login'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Login'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+          description: ''
+  /api/auth/logout/:
+    post:
+      operationId: auth_logout_create
+      description: |-
+        Calls Django logout method and delete the Token object
+        assigned to the current User object.
+
+        Accepts/Returns nothing.
+      tags:
+      - auth
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /api/auth/password/change/:
+    post:
+      operationId: auth_password_change_create
+      description: |-
+        Calls Django Auth SetPasswordForm save method.
+
+        Accepts the following POST parameters: new_password1, new_password2
+        Returns the success/fail message.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordChange'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordChange'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordChange'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /api/auth/password/reset/:
+    post:
+      operationId: auth_password_reset_create
+      description: |-
+        Calls Django Auth PasswordResetForm save method.
+
+        Accepts the following POST parameters: email
+        Returns the success/fail message.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordReset'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordReset'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordReset'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /api/auth/password/reset/confirm/:
+    post:
+      operationId: auth_password_reset_confirm_create
+      description: |-
+        Password reset e-mail link is confirmed, therefore
+        this resets the user's password.
+
+        Accepts the following POST parameters: token, uid,
+            new_password1, new_password2
+        Returns the success/fail message.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PasswordResetConfirm'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /api/auth/registration/:
+    post:
+      operationId: auth_registration_create
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Register'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/Register'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Register'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+          description: ''
+  /api/auth/registration/resend-email/:
+    post:
+      operationId: auth_registration_resend_email_create
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ResendEmailVerification'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ResendEmailVerification'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ResendEmailVerification'
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /api/auth/registration/verify-email/:
+    post:
+      operationId: auth_registration_verify_email_create
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/VerifyEmail'
+        required: true
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RestAuthDetail'
+          description: ''
+  /api/auth/user/:
+    get:
+      operationId: auth_user_retrieve
+      description: |-
+        Reads and updates UserModel fields
+        Accepts GET, PUT, PATCH methods.
+
+        Default accepted fields: username, first_name, last_name
+        Default display fields: pk, username, email, first_name, last_name
+        Read-only fields: pk, email
+
+        Returns UserModel fields.
+      tags:
+      - auth
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetails'
+          description: ''
+    put:
+      operationId: auth_user_update
+      description: |-
+        Reads and updates UserModel fields
+        Accepts GET, PUT, PATCH methods.
+
+        Default accepted fields: username, first_name, last_name
+        Default display fields: pk, username, email, first_name, last_name
+        Read-only fields: pk, email
+
+        Returns UserModel fields.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserDetails'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserDetails'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserDetails'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetails'
+          description: ''
+    patch:
+      operationId: auth_user_partial_update
+      description: |-
+        Reads and updates UserModel fields
+        Accepts GET, PUT, PATCH methods.
+
+        Default accepted fields: username, first_name, last_name
+        Default display fields: pk, username, email, first_name, last_name
+        Read-only fields: pk, email
+
+        Returns UserModel fields.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserDetails'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserDetails'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserDetails'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetails'
+          description: ''
+  /api/orders/add-item-to-cart/{product_id}/:
+    post:
+      operationId: orders_add_item_to_cart_create
+      description: |-
+        Create an item for the product identified by product_id. It ensures a cart exists for the user,
+        either by retrieving an existing one or creating a new one,
+        before proceeding to add the specified item.
+        product_id is required
+      parameters:
+      - in: path
+        name: product_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - orders
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+          description: ''
+  /api/orders/cart-details/:
+    get:
+      operationId: orders_cart_details_retrieve
+      description: Enables authenticated users to retrieve the details of their current
+        shopping cart, if existed.
+      tags:
+      - orders
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+          description: ''
+  /api/orders/create-order/{cart_id}/:
+    post:
+      operationId: orders_create_order_create
+      description: |-
+        Submit an order. Items from the cart will be added to the order.
+        The total cost is calculated for payment, which is then queued for processing.
+        This function returns the order details. A valid cart_id must be provided.
+      parameters:
+      - in: path
+        name: cart_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - orders
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+          description: ''
+  /api/orders/delete-from-cart/{item_id}/:
+    delete:
+      operationId: orders_delete_from_cart_destroy
+      description: |-
+        Allows authenticated users to remove a specific item, identified by item_id,
+        from their shopping cart
+        item_id is required
+      parameters:
+      - in: path
+        name: item_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - orders
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+          description: ''
+  /api/orders/empty-cart/{cart_id}/:
+    post:
+      operationId: orders_empty_cart_create
+      description: |-
+        Allows authenticated user to remove all items from their cart.
+        Allows admin user to empty cart givven it's id.
+      parameters:
+      - in: path
+        name: cart_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - orders
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+          description: ''
+  /api/payments/all-payments/:
+    get:
+      operationId: payments_all_payments_retrieve
+      description: |-
+        Retrieve list of transactions
+        Superusers can view all payments across the platform,
+        while other authenticated users can only see payments related to their own orders.
+        The response provid detailed information on each payment in a structured format.
+      tags:
+      - payments
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+          description: ''
+  /api/payments/payment/{payment_id}/:
+    get:
+      operationId: payments_payment_retrieve
+      description: |-
+        Allows authenticated usersto retrieve details of a specific payment transaction identified by payment_id.
+        Superusers have the privilege to access any payment's details, whereas other users can only fetch details of payments associated with their own orders.
+      parameters:
+      - in: path
+        name: payment_id
+        schema:
+          type: string
+        required: true
+      tags:
+      - payments
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+          description: ''
+  /api/products/all-products/:
+    get:
+      operationId: products_all_products_list
+      description: |-
+        Returns all saved products,
+        Authentication not required.
+      tags:
+      - products
+      security:
+      - tokenAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IceCream'
+          description: ''
+  /api/products/create-product/:
+    post:
+      operationId: products_create_product_create
+      description: |-
+        Creat new product, only admin user is allowed to perform this action.
+        Request body:
+        {
+        "title": "string",
+        "flavor": "string",
+        "description": "string",
+        "price": "45"
+        }
+      tags:
+      - products
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IceCreamRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/IceCreamRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/IceCreamRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IceCream'
+          description: ''
+  /api/products/delete-product/{product_id}/:
+    delete:
+      operationId: products_delete_product_destroy
+      description: |-
+        Delete existing product, only admin user is allowed to perform this action.
+
+        product_id is required
+      parameters:
+      - in: path
+        name: product_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - products
+      security:
+      - tokenAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/products/update-product/{product_id}/:
+    put:
+      operationId: products_update_product_update
+      description: |-
+        Update product details, only admin user is allowed to perform this action.
+        product_id is required
+      parameters:
+      - in: path
+        name: product_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - products
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IceCreamRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/IceCreamRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/IceCreamRequest'
+        required: true
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IceCream'
+          description: ''
+    patch:
+      operationId: products_update_product_partial_update
+      description: |-
+        Update product details, only admin user is allowed to perform this action.
+        product_id is required
+      parameters:
+      - in: path
+        name: product_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - products
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedIceCreamRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedIceCreamRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedIceCreamRequest'
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IceCream'
+          description: ''
+  /api/statistics/average-oder-value/:
+    get:
+      operationId: statistics_average_oder_value_retrieve
+      description: |-
+        Computes and returns the average value of all orders.
+        Admin user only.
+      tags:
+      - statistics
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvgOrderValue'
+          description: ''
+  /api/statistics/average-processing-time/:
+    get:
+      operationId: statistics_average_processing_time_retrieve
+      description: |-
+        Provide the functionality to retrieve the average processing time of payment transactions.
+        Admin use only.
+      tags:
+      - statistics
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AvgProcessingTime'
+          description: ''
+  /api/statistics/endpoints-performance/:
+    get:
+      operationId: statistics_endpoints_performance_list
+      description: |-
+        Providing a comprehensive overview of the performance metrics across various endpoints.
+        Admin user only.
+      tags:
+      - statistics
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/StatisticEndpointPerformance'
+          description: ''
+  /api/statistics/faild-payments/:
+    get:
+      operationId: statistics_faild_payments_retrieve
+      description: |-
+        Retrieve the total count of faild payment transactions.
+        Admin user only.
+      tags:
+      - statistics
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FaildPayments'
+          description: ''
+  /api/statistics/orders-by-flavor/{flavor}/:
+    get:
+      operationId: statistics_orders_by_flavor_retrieve
+      description: Allows admin users to retrieve the total number of orders for a
+        specific ice cream flavor.
+      parameters:
+      - in: path
+        name: flavor
+        schema:
+          type: string
+        required: true
+      tags:
+      - statistics
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TotalOrdersByFlavor'
+          description: ''
+  /api/statistics/successful-payments/:
+    get:
+      operationId: statistics_successful_payments_retrieve
+      description: |-
+        Retrieve the total count of successful payment transactions.
+        Admin user only.
+      tags:
+      - statistics
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SuccessfulPayments'
+          description: ''
+  /api/statistics/total-orders/:
+    get:
+      operationId: statistics_total_orders_retrieve
+      description: Allows admin users, allowing them to retrieve the total number
+        of orders placed within the system.
+      tags:
+      - statistics
+      security:
+      - tokenAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TotalOrders'
+          description: ''
+components:
+  schemas:
+    AvgOrderValue:
+      type: object
+      properties:
+        average_order_value:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          description: Average order value
+      required:
+      - average_order_value
+    AvgProcessingTime:
+      type: object
+      properties:
+        average_processing_time:
+          type: number
+          format: double
+          description: Total faild payment
+      required:
+      - average_processing_time
+    Cart:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        user:
+          type: integer
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/IceCreamItem'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - items
+      - user
+    FaildPayments:
+      type: object
+      properties:
+        failed_payments:
+          type: integer
+          description: Total failed payment
+      required:
+      - failed_payments
+    IceCream:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        title:
+          type: string
+          description: Product title.
+          maxLength: 300
+        uuid_slug:
+          type: string
+          format: uuid
+        flavor:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+          description: Product description.
+          maxLength: 500
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          description: Product price
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - description
+      - id
+      - price
+      - title
+      - updated_at
+    IceCreamItem:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        quantity:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        ice_cream:
+          $ref: '#/components/schemas/IceCream'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - ice_cream
+      - id
+    IceCreamRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Product title.
+          maxLength: 300
+        flavor:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+          description: Product description.
+          maxLength: 500
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          description: Product price
+      required:
+      - description
+      - price
+      - title
+    Login:
+      type: object
+      properties:
+        username:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required:
+      - password
+    Nested:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        order_number:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        status:
+          type: string
+          description: The status of the order can be New, Checkout, Paid, Failed,
+            Shipped, Delivered, Returned, and Complete. (unpaid, paid, credited)
+          maxLength: 30
+        total:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          description: The total price of the Order including tax and shipping. It
+            excludes the items discount.
+        content:
+          type: string
+          description: The column used to store the additional details of the order.
+          maxLength: 500
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        created_by:
+          type: integer
+          nullable: true
+        items:
+          type: array
+          items:
+            type: integer
+      required:
+      - created_at
+      - id
+      - updated_at
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        order_number:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        status:
+          type: string
+          description: The status of the order can be New, Checkout, Paid, Failed,
+            Shipped, Delivered, Returned, and Complete. (unpaid, paid, credited)
+          maxLength: 30
+        total:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          description: The total price of the Order including tax and shipping. It
+            excludes the items discount.
+        content:
+          type: string
+          description: The column used to store the additional details of the order.
+          maxLength: 500
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        created_by:
+          type: integer
+          nullable: true
+        items:
+          type: array
+          items:
+            type: integer
+      required:
+      - created_at
+      - id
+      - updated_at
+    PasswordChange:
+      type: object
+      properties:
+        new_password1:
+          type: string
+          maxLength: 128
+        new_password2:
+          type: string
+          maxLength: 128
+      required:
+      - new_password1
+      - new_password2
+    PasswordReset:
+      type: object
+      description: Serializer for requesting a password reset e-mail.
+      properties:
+        email:
+          type: string
+          format: email
+      required:
+      - email
+    PasswordResetConfirm:
+      type: object
+      description: Serializer for confirming a password reset attempt.
+      properties:
+        new_password1:
+          type: string
+          maxLength: 128
+        new_password2:
+          type: string
+          maxLength: 128
+        uid:
+          type: string
+        token:
+          type: string
+      required:
+      - new_password1
+      - new_password2
+      - token
+      - uid
+    PatchedIceCreamRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Product title.
+          maxLength: 300
+        flavor:
+          type: string
+          maxLength: 100
+        description:
+          type: string
+          description: Product description.
+          maxLength: 500
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          description: Product price
+    PatchedUserDetails:
+      type: object
+      description: User model w/o password
+      properties:
+        pk:
+          type: integer
+          readOnly: true
+          title: ID
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          readOnly: true
+          title: Email address
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+    Payment:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        payment_id:
+          type: string
+          maxLength: 200
+        payment_status:
+          type: string
+          maxLength: 200
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,4}(?:\.\d{0,2})?$
+        processing_time_seconds:
+          type: number
+          format: double
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        order:
+          allOf:
+          - $ref: '#/components/schemas/Nested'
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - order
+      - updated_at
+    Register:
+      type: object
+      properties:
+        username:
+          type: string
+          maxLength: 150
+          minLength: 1
+        email:
+          type: string
+          format: email
+        password1:
+          type: string
+          writeOnly: true
+        password2:
+          type: string
+          writeOnly: true
+      required:
+      - password1
+      - password2
+      - username
+    ResendEmailVerification:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+    RestAuthDetail:
+      type: object
+      properties:
+        detail:
+          type: string
+          readOnly: true
+      required:
+      - detail
+    StatisticEndpointPerformance:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        endpoint:
+          type: string
+          maxLength: 255
+        response_time:
+          type: number
+          format: double
+          description: Response time in seconds
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - endpoint
+      - id
+      - response_time
+    SuccessfulPayments:
+      type: object
+      properties:
+        successful_payments:
+          type: integer
+          description: Total successful payment
+      required:
+      - successful_payments
+    Token:
+      type: object
+      description: Serializer for Token model.
+      properties:
+        key:
+          type: string
+          maxLength: 40
+      required:
+      - key
+    TotalOrders:
+      type: object
+      properties:
+        total_orders:
+          type: integer
+          description: Total number of orders
+      required:
+      - total_orders
+    TotalOrdersByFlavor:
+      type: object
+      properties:
+        total_orders:
+          type: integer
+          description: Total number of orders by flavor
+      required:
+      - total_orders
+    UserDetails:
+      type: object
+      description: User model w/o password
+      properties:
+        pk:
+          type: integer
+          readOnly: true
+          title: ID
+        username:
+          type: string
+          description: Required. 150 characters or fewer. Letters, digits and @/./+/-/_
+            only.
+          pattern: ^[\w.@+-]+$
+          maxLength: 150
+        email:
+          type: string
+          format: email
+          readOnly: true
+          title: Email address
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          maxLength: 150
+      required:
+      - email
+      - pk
+      - username
+    VerifyEmail:
+      type: object
+      properties:
+        key:
+          type: string
+          writeOnly: true
+      required:
+      - key
+  securitySchemes:
+    tokenAuth:
+      type: apiKey
+      in: header
+      name: Authorization
+      description: Token-based authentication with required prefix "Token"

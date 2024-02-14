@@ -1,0 +1,28 @@
+body {
+  display: flex;
+  flex-direction: column;
+  width: 100svw;
+  height: 100svh;
+  align-items: center;
+  justify-content: flex-start;
+}
+.products {
+  background-color: #181717;
+}
+h2 {
+  color: red;
+}
+
+header {
+  font-family: sans-serif;
+  color: #181717;
+  text-align: center;
+}
+header > p {
+  max-width: 800px;
+  text-align: center;
+}
+
+main > nav > a {
+  background-color: #e5dfe8;
+}
