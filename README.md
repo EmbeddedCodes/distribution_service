@@ -34,13 +34,13 @@ Ensure you have the following installed to work with the betting-api:
 1. Clone the repository:
 
 ```bash
-  git clone git@github.com:EmbeddedCodes/distribution-service.git
+  git clone git@github.com:EmbeddedCodes/distribution_service.git
 ```
 
 2. Navigate to the project directory:
 
 ```bash
-  cd distribution-service
+  cd distribution_service
 ```
 
 3. The project is containerised. on the root of the project: run
